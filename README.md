@@ -60,6 +60,13 @@ extends to the separately-hosted weights was
 [asked of OpenAI in 2021](https://github.com/openai/CLIP/issues/203) and never
 answered. Downloading on the user's behalf keeps the app out of that question.
 
+## Licence
+
+[MIT](LICENSE).
+
+The CLIP model the app can download is **not** covered by that licence and is
+not distributed with the app — see "The visual search model" above.
+
 ## Provenance
 
 This source was reconstructed from the shipped binary after the original was

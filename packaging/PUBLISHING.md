@@ -90,7 +90,6 @@ may refuse a self-signed package regardless.
       public HTTPS URL** — Partner Center validates it at submission and
       re-checks later, and a dead link can get a published app pulled. GitHub
       Pages is the least-effort option; see "Hosting the privacy policy" below.
-      Fill in `CONTACT_EMAIL_HERE` before publishing it.
 - [ ] **Age rating** — complete the IARC questionnaire.
 - [ ] **Screenshots** — at least one, minimum 1366x768.
       `store\screenshot-1-placeholder.png` is a 1400x820 capture of an *empty*
@@ -118,11 +117,8 @@ HTTPS by default, and stays up:
 Cloudflare Pages, Netlify and Vercel all work the same way and are equally free.
 If you have your own domain, better still: a URL you control outlives any host.
 
-Two things to do before publishing it:
-
-- Replace `CONTACT_EMAIL_HERE` with a real address. A contact route is expected
-  in a privacy policy, and Partner Center may ask for one separately too.
-- Keep it reachable. If the URL later 404s, the listing can be pulled.
+Keep it reachable once it is up. If the URL later 404s, the listing can be
+pulled.
 
 The policy's claims were verified against the code, not assumed: the only
 network-capable type in the whole app is the single `HttpClient` in

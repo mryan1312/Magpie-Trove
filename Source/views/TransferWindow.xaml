@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window x:Class="MagpieTrove.Views.TransferWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Export and import" Width="560" Height="430" MinWidth="500" MinHeight="390" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}" xmlns:views="clr-namespace:MagpieTrove.Views;assembly=MagpieTrove">
+  <Grid Margin="16">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <TabControl Name="Tabs">
+      <TabItem Header="Export photos">
+        <Grid Margin="14">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="130" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+          <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Margin="0,0,0,14" Text="Copy the currently selected photos to another folder. Source files are never changed." TextWrapping="Wrap" Foreground="{StaticResource MutedBrush}" />
+          <TextBlock Grid.Row="1" VerticalAlignment="Center" Text="Destination" />
+          <TextBox Name="DestinationBox" Grid.Row="1" Grid.Column="1" Margin="0,4" />
+          <Button Grid.Row="1" Grid.Column="2" Content="Browse..." Margin="8,4,0,4" Click="OnBrowseDestination" />
+          <TextBlock Grid.Row="2" VerticalAlignment="Center" Text="Resize long edge" />
+          <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <TextBox Name="MaxEdgeBox" Width="90" Text="0" Margin="0,4" />
+            <TextBlock Text=" pixels (0 keeps original size)" VerticalAlignment="Center" Foreground="{StaticResource MutedBrush}" />
+          </StackPanel>
+          <TextBlock Grid.Row="3" VerticalAlignment="Center" Text="Rename pattern" />
+          <TextBox Name="PatternBox" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Text="{}{name}" Margin="0,4" />
+          <TextBlock Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Text="Tokens: {name}, {index}, {date}. Existing files receive a numeric suffix." Foreground="{StaticResource MutedBrush}" FontSize="11" />
+          <TextBlock Grid.Row="5" VerticalAlignment="Top" Margin="0,12,0,0" Text="Format" />
+          <ComboBox Name="FormatBox" Grid.Row="5" Grid.Column="1" Width="150" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,8,0,0">
+            <ComboBoxItem Content="Original" Tag="Original" IsSelected="True" />
+            <ComboBoxItem Content="JPEG" Tag="Jpeg" />
+            <ComboBoxItem Content="PNG" Tag="Png" />
+          </ComboBox>
+          <Button Name="ExportPhotosButton" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" Content="Export selected photos" Background="{StaticResource AccentSoftBrush}" Click="OnExportPhotos" />
+        </Grid>
+      </TabItem>
+      <TabItem Header="Tags">
+        <StackPanel Margin="14">
+          <TextBlock Text="Export tags as portable JSON or CSV, then import them into this or another library. Imports match the original path first and a SHA-256 content hash if the photo moved." TextWrapping="Wrap" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,16" />
+          <CheckBox Name="SelectedOnlyBox" Content="Export only currently selected images" Margin="0,0,0,16" />
+          <StackPanel Orientation="Horizontal">
+            <Button Content="Export tags..." Click="OnExportTags" />
+            <Button Content="Import tags..." Margin="8,0,0,0" Click="OnImportTags" />
+          </StackPanel>
+          <TextBlock Text="CSV uses one row per image/tag pair. JSON keeps each image and its tag list together. Import adds tags and never removes existing ones." TextWrapping="Wrap" Foreground="{StaticResource MutedBrush}" Margin="0,16,0,0" />
+        </StackPanel>
+      </TabItem>
+    </TabControl>
+    <ProgressBar Name="Progress" Grid.Row="1" Height="4" Margin="0,10,0,0" Minimum="0" Maximum="1" Visibility="Collapsed" />
+    <DockPanel Grid.Row="2" Margin="0,10,0,0">
+      <TextBlock Name="StatusText" VerticalAlignment="Center" TextWrapping="Wrap" Foreground="{StaticResource MutedBrush}" />
+      <Button Content="Close" Width="84" HorizontalAlignment="Right" IsCancel="True" />
+    </DockPanel>
+  </Grid>
+</Window>

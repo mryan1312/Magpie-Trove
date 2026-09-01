@@ -1,0 +1,23 @@
+# The recovered source is CRLF throughout (decompiler output), and the build
+# scripts are PowerShell, so normalise text to LF in the repo and check it out
+# as CRLF on Windows.
+* text=auto
+
+*.cs      text diff=csharp
+*.xaml    text
+*.csproj  text
+*.xml     text
+*.md      text
+*.html    text
+*.txt     text
+*.ps1     text eol=crlf
+*.json    text
+
+*.ico     binary
+*.png     binary
+*.dll     binary
+*.pdb     binary
+*.exe     binary
+*.onnx    binary
+*.msix    binary
+*.zip     binary

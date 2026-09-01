@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window x:Class="MagpieTrove.Views.LibraryManagerWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Libraries and storage" Height="590" Width="720" WindowStartupLocation="CenterOwner" ResizeMode="CanResizeWithGrip" ShowInTaskbar="False" Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}" MinWidth="560" MinHeight="360" xmlns:views="clr-namespace:MagpieTrove.Views;assembly=MagpieTrove">
+  <Border BorderBrush="{StaticResource LineBrush}" BorderThickness="1" Padding="18">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <TextBlock Grid.Row="0" Text="LIBRARY STORAGE" Style="{StaticResource Caption}" />
+      <Grid Row="1" Margin="0,7,0,18">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <StackPanel>
+          <TextBlock Text="Default location for new libraries" />
+          <TextBox Name="DefaultRootBox" Margin="0,5,8,0" Padding="8,6" />
+          <TextBlock Text="Existing libraries are not moved when this changes." Foreground="{StaticResource FaintBrush}" FontSize="11" Margin="0,4,0,0" />
+        </StackPanel>
+        <Button Grid.Column="1" Content="Browse..." Width="88" VerticalAlignment="Center" Click="OnBrowseDefault" />
+      </Grid>
+      <Grid Row="2" Margin="0,0,0,18">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <StackPanel>
+          <TextBlock Text="VISUAL SEARCH MODEL" Style="{StaticResource Caption}" />
+          <TextBlock Text="Shared model folder" Margin="0,7,0,0" />
+          <TextBox Name="ModelDirectoryBox" Margin="0,5,8,0" Padding="8,6" />
+          <TextBlock Name="ModelStatusText" Foreground="{StaticResource FaintBrush}" FontSize="11" Margin="0,4,0,0" TextWrapping="Wrap" />
+          <ProgressBar Name="ModelProgress" Height="5" Margin="0,7,8,0" Minimum="0" Maximum="100" Visibility="Collapsed" />
+        </StackPanel>
+        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+          <Button Content="Browse..." Width="106" Click="OnBrowseModel" />
+          <Button Name="DownloadModelButton" Content="Download model" Width="106" Margin="0,6,0,0" Background="{StaticResource AccentSoftBrush}" Click="OnDownloadModel" />
+          <Button Name="CancelDownloadButton" Content="Cancel download" Width="106" Margin="0,6,0,0" Visibility="Collapsed" Click="OnCancelDownload" />
+        </StackPanel>
+      </Grid>
+      <Grid Row="3">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Text="LIBRARIES" Style="{StaticResource Caption}" />
+        <ListBox Name="LibraryList" Grid.Row="1" Margin="0,7,0,8" DisplayMemberPath="DisplayText" ItemsSource="{Binding Libraries}" />
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+          <Button Content="New..." Width="78" Click="OnNew" />
+          <Button Content="Add existing..." Width="106" Margin="6,0,0,0" Click="OnAddExisting" />
+          <Button Content="Rename..." Width="82" Margin="6,0,0,0" Click="OnRename" />
+          <Button Content="Forget" Width="72" Margin="6,0,0,0" ToolTip="Remove this library from the list without deleting any files" Click="OnForget" />
+        </StackPanel>
+      </Grid>
+      <Grid Row="4" Margin="0,18,0,0">
+        <TextBlock Text="Switching libraries keeps photo files untouched." Foreground="{StaticResource FaintBrush}" VerticalAlignment="Center" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+          <Button Content="Cancel" Width="84" IsCancel="True" />
+          <Button Name="SaveButton" Content="Save and open" Width="110" Margin="8,0,0,0" IsDefault="True" Background="{StaticResource AccentSoftBrush}" Click="OnSave" />
+        </StackPanel>
+      </Grid>
+    </Grid>
+  </Border>
+</Window>

@@ -1,0 +1,57 @@
+# ---------------------------------------------------------------------------
+# Personal data — never commit. Libraries hold your own images, thumbnails and
+# tag database; Model/ is a 336 MB download that also exceeds GitHub's file
+# size limit. Both are reproducible or private, neither belongs in the repo.
+# ---------------------------------------------------------------------------
+/Libraries/
+/Model/
+
+# ---------------------------------------------------------------------------
+# Build output
+# ---------------------------------------------------------------------------
+[Bb]in/
+[Oo]bj/
+/dist/
+/packaging/layout/
+/packaging/out/
+/packaging/zip-stage/
+
+# Bin/ holds the original Taggr build the source was recovered from.
+# Taggr.dll and Taggr.pdb are kept as provenance (see Source/RECOVERY_NOTES.md);
+# the 66 MB of NuGet redistributables alongside them are not.
+!/Bin/
+/Bin/*
+!/Bin/Taggr.dll
+!/Bin/Taggr.pdb
+
+# Working copies taken during the recovery and rename
+/Source.backup-*/
+
+# ---------------------------------------------------------------------------
+# Tooling
+# ---------------------------------------------------------------------------
+.vs/
+.vscode/
+*.user
+*.suo
+*.userprefs
+_ReSharper*/
+*.DotSettings.user
+
+# NuGet
+*.nupkg
+*.snupkg
+/packages/
+project.lock.json
+
+# MSIX signing — a test certificate must never reach a public repo
+*.pfx
+*.cer
+*.snk
+
+# OS noise
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.stackdump

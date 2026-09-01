@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>MagpieTrove</AssemblyName>
+    <RootNamespace></RootNamespace>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <!-- "annotations" keeps the recovered `?` annotations meaningful without the
+         null-flow warnings, which decompilation cannot reproduce faithfully.
+         Switch to "enable" when you want to work through them. -->
+    <Nullable>annotations</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="assets\magpietrove.ico" />
+  </ItemGroup>
+
+  <!--
+    Versions were read out of the assembly metadata of the DLLs in Bin.
+    Transitive dependencies (the SQLitePCLRaw.* provider) come in via Microsoft.Data.Sqlite.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.10" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.24.4" />
+    <PackageReference Include="System.Numerics.Tensors" Version="10.0.10" />
+    <!-- Pinned above the 2.1.11 that Microsoft.Data.Sqlite 10.0.10 pulls in:
+         that version carries GHSA-2m69-gcr7-jv3q (high). Patch-level bump,
+         same provider API. Drop this line to go back to the shipped version. -->
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.13" />
+  </ItemGroup>
+
+</Project>

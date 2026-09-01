@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window x:Class="MagpieTrove.Views.TagColorDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Tag colour" Height="260" Width="390" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}" xmlns:views="clr-namespace:MagpieTrove.Views;assembly=MagpieTrove">
+  <Border BorderBrush="{StaticResource LineBrush}" BorderThickness="1" Padding="16">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
+      <TextBlock Text="Choose a colour for this tag" Margin="0,0,0,10" />
+      <UniformGrid Grid.Row="1" Rows="2" Columns="6" Margin="0,0,0,12">
+        <Button Tag="#4FA3E3" Background="#4FA3E3" Margin="3" Height="32" Click="OnSwatch" />
+        <Button Tag="#6FC3DF" Background="#6FC3DF" Margin="3" Click="OnSwatch" />
+        <Button Tag="#65C18C" Background="#65C18C" Margin="3" Click="OnSwatch" />
+        <Button Tag="#A4C95B" Background="#A4C95B" Margin="3" Click="OnSwatch" />
+        <Button Tag="#E8C24F" Background="#E8C24F" Margin="3" Click="OnSwatch" />
+        <Button Tag="#E79A4A" Background="#E79A4A" Margin="3" Click="OnSwatch" />
+        <Button Tag="#E06C6C" Background="#E06C6C" Margin="3" Height="32" Click="OnSwatch" />
+        <Button Tag="#D86AA8" Background="#D86AA8" Margin="3" Click="OnSwatch" />
+        <Button Tag="#A879E0" Background="#A879E0" Margin="3" Click="OnSwatch" />
+        <Button Tag="#7D86E8" Background="#7D86E8" Margin="3" Click="OnSwatch" />
+        <Button Tag="#A0A6B0" Background="#A0A6B0" Margin="3" Click="OnSwatch" />
+        <Button Tag="#6E747D" Background="#6E747D" Margin="3" Click="OnSwatch" />
+      </UniformGrid>
+      <Grid Row="2">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Border Name="Preview" Width="34" Height="28" CornerRadius="4" Margin="0,0,8,0" />
+        <TextBox Name="HexBox" Grid.Column="1" Padding="7,4" TextChanged="OnHexChanged" />
+      </Grid>
+      <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+        <Button Content="Cancel" Width="84" IsCancel="True" />
+        <Button Content="OK" Width="84" Margin="8,0,0,0" IsDefault="True" Background="{StaticResource AccentSoftBrush}" Click="OnOk" />
+      </StackPanel>
+    </Grid>
+  </Border>
+</Window>

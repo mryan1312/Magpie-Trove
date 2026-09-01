@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Magpie Trove — Privacy Policy</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    max-width: 42rem; margin: 0 auto; padding: 2.5rem 1.25rem 4rem;
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1b1b1f; background: #fff;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { color: #e6e6ea; background: #17171a; }
+    code { background: #26262c; }
+    a { color: #7ab5f0; }
+  }
+  h1 { font-size: 1.7rem; margin-bottom: .25rem; }
+  h2 { font-size: 1.15rem; margin-top: 2.25rem; }
+  .updated { color: #6b6b76; font-size: .9rem; margin-top: 0; }
+  code { background: #f0f0f3; padding: .1em .35em; border-radius: 3px; font-size: .9em; }
+  ul { padding-left: 1.25rem; }
+  li { margin: .35rem 0; }
+</style>
+</head>
+<body>
+
+<h1>Magpie Trove — Privacy Policy</h1>
+<p class="updated">Last updated 1 September 2026</p>
+
+<p>Magpie Trove is a desktop application for tagging, searching and organising
+images. It runs entirely on your computer.</p>
+
+<h2>What we collect</h2>
+
+<p><strong>Nothing.</strong> Magpie Trove has no accounts, no sign-in, no
+telemetry, no analytics, no crash reporting, no advertising and no third-party
+SDKs. No information about you, your computer or your images is transmitted to
+the developer or to anyone else.</p>
+
+<h2>Your images and tags</h2>
+
+<p>Everything the app creates — the tag database, thumbnails, settings and the
+visual-search index — is written to your own computer and stays there:</p>
+
+<ul>
+  <li>Installed from the Microsoft Store:
+      <code>%LOCALAPPDATA%\Packages\Meryndi.MagpieTrove_8xr7vqtychad0\LocalCache\Local\MagpieTrove\</code></li>
+  <li>Installed from the portable download:
+      <code>%LOCALAPPDATA%\MagpieTrove\</code></li>
+  <li>Libraries you create in another folder are stored in that folder.</li>
+</ul>
+
+<p>Your image files themselves are only read. They are never uploaded, and they
+are never moved, altered or deleted unless you explicitly use the app's export
+or transfer features.</p>
+
+<h2>Network use</h2>
+
+<p>Magpie Trove makes exactly one kind of outbound request, and only when you
+ask it to.</p>
+
+<p>Visual search — finding lookalike images and suggesting tags — needs a
+machine-learning model that is too large to ship inside the app. When you choose
+<em>Libraries… → Download model</em>, the app downloads that model file over
+HTTPS from Hugging Face (<code>huggingface.co</code>) and verifies it against a
+published checksum before use.</p>
+
+<p>That request sends no personal data — no images, no tags, no filenames, no
+identifiers. It is an ordinary file download. As with visiting any website, the
+server you download from will see your IP address and the request itself; that
+is handled under
+<a href="https://huggingface.co/privacy">Hugging Face's privacy policy</a>, not
+ours. If you never download the model, Magpie Trove makes no network requests at
+all, and the rest of the app works normally without it.</p>
+
+<h2>Children</h2>
+
+<p>Magpie Trove is not directed at children and collects no personal information
+from anyone, regardless of age.</p>
+
+<h2>Your data, your control</h2>
+
+<p>Because nothing is collected or transmitted, there is no data held about you
+to access, correct, export or erase. You can delete everything the app has
+stored at any time by uninstalling it and deleting the folders listed above.</p>
+
+<h2>Changes</h2>
+
+<p>If this policy changes, the updated version will be posted at this address
+with a new date. Material changes affecting how the app handles your information
+will also be noted in the app's release notes.</p>
+
+<h2>Contact</h2>
+
+<p>Questions about this policy: <a href="mailto:CONTACT_EMAIL_HERE">CONTACT_EMAIL_HERE</a></p>
+
+</body>
+</html>

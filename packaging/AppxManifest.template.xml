@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  Template. New-Msix.ps1 substitutes the {{...}} tokens and writes the real
+  AppxManifest.xml into the package layout. Do not edit the generated copy.
+
+  The three identity values come from Partner Center:
+    Product Management > Product identity
+  They must match exactly or the Store will reject the upload.
+-->
+
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap rescap">
+
+  <Identity
+    Name="{{IDENTITY_NAME}}"
+    Publisher="{{PUBLISHER}}"
+    Version="{{VERSION}}"
+    ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>Magpie Trove</DisplayName>
+    <PublisherDisplayName>{{PUBLISHER_DISPLAY_NAME}}</PublisherDisplayName>
+    <Logo>Images\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+
+  <Applications>
+    <Application Id="MagpieTrove" Executable="app\MagpieTrove.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="Magpie Trove"
+        Description="Tag, search and organise your image library locally. Nothing is uploaded."
+        BackgroundColor="#1B1B1F"
+        Square150x150Logo="Images\Square150x150Logo.png"
+        Square44x44Logo="Images\Square44x44Logo.png">
+        <uap:DefaultTile
+          Wide310x150Logo="Images\Wide310x150Logo.png"
+          Square310x310Logo="Images\Square310x310Logo.png"
+          Square71x71Logo="Images\Square71x71Logo.png" />
+        <uap:SplashScreen Image="Images\SplashScreen.png" />
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <!-- Required for any Win32 desktop app. Justify at submission as: the app is a
+         packaged desktop (WPF) application that reads image files the user selects. -->
+    <rescap:Capability Name="runFullTrust" />
+    <!-- Declared because Libraries... > Download model fetches the CLIP model over HTTPS. -->
+    <Capability Name="internetClient" />
+  </Capabilities>
+
+</Package>

@@ -93,6 +93,27 @@ Write-Host 'Packing...' -ForegroundColor Cyan
 & $makeappx pack /d $layout /p $msix /o
 if ($LASTEXITCODE -ne 0) { throw 'makeappx failed.' }
 
+# Read the identity back out of the package rather than trusting the parameters
+# that went in. A package built with the defaults looks identical in the console
+# but Partner Center rejects it for an unmatched publisher.
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$archive = [IO.Compression.ZipFile]::OpenRead($msix)
+try {
+    $reader   = New-Object System.IO.StreamReader(($archive.Entries | Where-Object FullName -eq 'AppxManifest.xml').Open())
+    $packed   = ([xml] $reader.ReadToEnd()).Package
+    $reader.Close()
+}
+finally { $archive.Dispose() }
+
+Write-Host ''
+Write-Host 'Packed identity:' -ForegroundColor Cyan
+Write-Host "  Name                 $($packed.Identity.Name)"
+Write-Host "  Publisher            $($packed.Identity.Publisher)"
+Write-Host "  PublisherDisplayName $($packed.Properties.PublisherDisplayName)"
+Write-Host "  Version              $($packed.Identity.Version)"
+
+$isTestIdentity = $packed.Identity.Publisher -match 'Test Certificate'
+
 # --- 4. Optional test signing ----------------------------------------------
 if ($TestSign) {
     if ($Publisher -notmatch 'Test Certificate') {
@@ -123,6 +144,21 @@ if ($TestSign) {
 $size = [math]::Round((Get-Item $msix).Length / 1MB, 1)
 Write-Host ''
 Write-Host "Package: $msix  ($size MB)" -ForegroundColor Green
-if (-not $TestSign) {
-    Write-Host 'Unsigned, as the Store requires. Upload this file in Partner Center.' -ForegroundColor Green
+
+if ($TestSign) { return }
+
+if ($isTestIdentity) {
+    Write-Host ''
+    Write-Warning @'
+This package carries the placeholder test identity, so Partner Center will
+reject it ("no publisher ID" or similar) because it matches no reservation.
+Rebuild with the values from Product Management > Product identity:
+
+  .\New-Msix.ps1 -IdentityName 'Meryndi.MagpieTrove' `
+                 -Publisher 'CN=ADCAE01A-460A-4EED-A5F9-4250834464BA' `
+                 -PublisherDisplayName 'Meryndi'
+'@
+    return
 }
+
+Write-Host 'Unsigned, as the Store requires. Upload this file in Partner Center.' -ForegroundColor Green

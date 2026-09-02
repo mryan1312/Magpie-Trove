@@ -95,11 +95,9 @@ upload. Register the layout instead, as above.
 ## Submission checklist
 
 - [ ] **Packages** — upload `out\MagpieTrove-*.msix`
-- [ ] **`runFullTrust` justification.** A restricted capability; the form asks
-      why you need it. Routinely approved for packaged desktop apps. Suggested
-      wording: *"Magpie Trove is a packaged Win32 (WPF) desktop application. It
-      requires full trust to read image files from folders the user explicitly
-      adds to their library."*
+- [ ] **`runFullTrust` justification** — a restricted capability, so the
+      submission form asks why you need it. Text ready to paste under
+      "The runFullTrust capability" below.
 - [ ] **Privacy policy URL** — **mandatory**, because the app makes a network
       call: `Libraries... > Download model` fetches the CLIP model from Hugging
       Face. Written already: `privacy.html` in the repository root. It must be
@@ -142,6 +140,60 @@ network-capable type in the whole app is the single `HttpClient` in
 `Services/ModelInstallService.cs`, and there is no telemetry, analytics, crash
 reporting or third-party SDK anywhere. If that ever changes, the policy has to
 change with it.
+
+
+## The runFullTrust capability
+
+Paste this into the restricted-capability justification field. It is routinely
+approved for packaged desktop apps — the point of the text is to show a reviewer
+that the capability is structural rather than elective, and to bound what the
+app does with it.
+
+```
+Magpie Trove is a Win32 desktop application (WPF on .NET) distributed through
+the MSIX packaging model. It declares runFullTrust because that capability is a
+structural requirement of packaging a desktop application: the app's entry point
+is Windows.FullTrustApplication, and a Win32 process cannot run inside the
+restricted app container.
+
+The capability is used for three things:
+
+1. Reading image files from folders the user explicitly adds to their library
+   through the app's "Add folders..." picker. The app indexes those images and
+   writes its own database and thumbnail cache to its package-local application
+   data. It does not enumerate or read anything the user has not chosen.
+
+2. Loading the native components it depends on: ONNX Runtime, which analyses
+   images locally on the CPU, and SQLite, which stores the tag database. Both
+   are ordinary redistributable libraries shipped inside the package.
+
+3. A single "Reveal in Explorer" command, which launches explorer.exe /select
+   on the file the user currently has selected.
+
+The application runs entirely as the standard user. It declares no elevation
+manifest and never requests administrator rights. It installs no service, driver
+or scheduled task, writes nothing to the registry, and runs no background
+process outside its own window. It makes one outbound network request, to
+huggingface.co, and only when the user explicitly chooses to download the
+optional image-analysis model; that download is verified against a published
+SHA-256 checksum before use. The app contains no telemetry, analytics or
+advertising.
+```
+
+Every claim in that text was checked against the source, not assumed. If the app
+changes, re-check these before reusing it:
+
+| Claim | How it was verified |
+|---|---|
+| No elevation | No `requestedExecutionLevel` or application manifest anywhere |
+| One process launch | `Process.Start` appears once, `explorer.exe /select` in `MainViewModel` |
+| No registry, services, drivers, scheduled tasks | No `Registry.`, `ServiceController`, `TaskScheduler`, `CreateService` or `DeviceIoControl` |
+| Native code only via packages | No `DllImport` in the source; native code arrives with ONNX Runtime and SQLite |
+| One network endpoint | The only network-capable type is the single `HttpClient` in `Services/ModelInstallService.cs` |
+| Checksum verified | `ModelInstallService.ExpectedSha256`, checked before the file is moved into place |
+
+Overstating any of this is the one way a straightforward approval turns into a
+rejection, so keep it accurate rather than flattering.
 
 
 ## The demo library

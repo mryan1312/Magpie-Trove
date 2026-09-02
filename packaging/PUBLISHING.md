@@ -193,49 +193,52 @@ changes, re-check these before reusing it:
 | One network endpoint | The only network-capable type is the single `HttpClient` in `Services/ModelInstallService.cs` |
 | Checksum verified | `ModelInstallService.ExpectedSha256`, checked before the file is moved into place |
 
-The wording says "the user's own hardware" rather than "the CPU" deliberately —
-see the note on DirectML below, which would otherwise make the text wrong the
-moment inference moves to the GPU.
+The wording says "the user's own hardware" rather than "the CPU" deliberately:
+inference now runs on the GPU where DirectML is available, and falls back to the
+CPU where it is not. See "GPU inference" below.
 
 
-## Inference runs on the CPU, but not on purpose
+## GPU inference
 
-`ClipEmbedder` asks for GPU acceleration and never gets it:
+`ClipEmbedder` asks for the DirectML execution provider and, since the move to
+`Microsoft.ML.OnnxRuntime.DirectML`, actually gets it.
 
-```csharp
-Provider = "CPU";
-if (useGpu)
-{
-    try
-    {
-        sessionOptions.AppendExecutionProvider_DML();
-        Provider = "GPU (DirectML)";
-    }
-    catch (Exception) { }
-}
-```
+It did not before. The original build referenced plain
+`Microsoft.ML.OnnxRuntime`, the CPU-only package, whose native library has no
+DirectML entry point — so `AppendExecutionProvider_DML()` threw
+`EntryPointNotFoundException`, an empty `catch` swallowed it, and every
+embedding was computed on the CPU. The intent was in the code from the start;
+only the package was wrong.
 
-The referenced package is `Microsoft.ML.OnnxRuntime`, the CPU-only build. Its
-native `onnxruntime.dll` has no DirectML entry point, so the call throws
-`EntryPointNotFoundException`, the empty catch swallows it, and `Provider`
-stays `"CPU"`. Verified against 1.24.4: the available providers are
-`AzureExecutionProvider, CPUExecutionProvider`, and nothing else.
+Measured on a GTX 1080 with the CLIP ViT-B/32 encoder, batch of 8:
 
-This is inherited, not introduced — the original build shipped the same way;
-`Bin/runtimes/win-x64/native/` contains no `DirectML.dll`.
+| Provider | Per image | Throughput |
+|---|---|---|
+| CPU | 58.1 ms | 17.2 images/sec |
+| GPU (DirectML) | 6.5 ms | 154.5 images/sec |
 
-To actually get the GPU, swap the package:
+Roughly 9x, which on a 5,000-image library is about five minutes of "Analyse
+images" down to about thirty seconds.
 
-```xml
-<PackageReference Include="Microsoft.ML.OnnxRuntime.DirectML" Version="1.24.4" />
-```
+**The fallback was hardened at the same time.** DirectML can fail either when
+the provider is registered or only when the session is built, on an unsupported
+or broken driver. Originally only the registration call sat inside the
+try/catch, so a driver-stage failure would have escaped as an unhandled
+exception. `ClipEmbedder` now builds the session inside the same try and falls
+back to a clean CPU session, so any DirectML failure degrades to CPU instead of
+breaking analysis.
 
-No code change is needed — the DirectML path is already written, and the
-existing try/catch still falls back to CPU on machines where it fails. The
-trade-offs are a larger package and a dependency on the user's GPU driver;
-"Analyse images" over a large library is where the difference would show. If
-you make that change, re-check the runFullTrust wording above and the "CPU"
-claim anywhere else it appears.
+**On package size.** `Microsoft.AI.DirectML` comes in transitively and adds
+`DirectML.dll` (17.7 MB) to the package, taking the MSIX from 69 to 79 MB. That
+DLL is bundled rather than taken from Windows, so it does not raise the
+manifest's `MinVersion`. The 2.1 MB `DirectML.Debug.dll` alongside it is
+stripped at publish time by the `RemoveDirectMLDebugLayer` target in the
+csproj — it is only loaded for `DML_CREATE_DEVICE_FLAG_DEBUG`, which nothing
+here requests.
+
+`ClipEmbedder.Provider` records which path was taken, but nothing in the UI
+reads it. If you ever want to show users whether they are on GPU or CPU, that
+value is already there.
 
 Overstating any of this is the one way a straightforward approval turns into a
 rejection, so keep it accurate rather than flattering.

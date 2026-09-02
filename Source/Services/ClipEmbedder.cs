@@ -49,23 +49,33 @@ public sealed class ClipEmbedder : IDisposable
 		{
 			throw new FileNotFoundException("CLIP vision model not found.", modelPath);
 		}
-		SessionOptions sessionOptions = new SessionOptions
+		static SessionOptions NewOptions() => new SessionOptions
 		{
 			GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL
 		};
+
+		InferenceSession? session = null;
 		Provider = "CPU";
 		if (useGpu)
 		{
+			// DirectML can fail either when the provider is registered — Windows
+			// before 1903 has no DirectML.dll, and the runtime does not ship one —
+			// or only once the session is built, on an unsupported or broken
+			// driver. Both steps therefore sit inside the fallback.
 			try
 			{
-				sessionOptions.AppendExecutionProvider_DML();
+				SessionOptions gpuOptions = NewOptions();
+				gpuOptions.AppendExecutionProvider_DML();
+				session = new InferenceSession(modelPath, gpuOptions);
 				Provider = "GPU (DirectML)";
 			}
 			catch (Exception)
 			{
+				session = null;
+				Provider = "CPU";
 			}
 		}
-		_session = new InferenceSession(modelPath, sessionOptions);
+		_session = session ?? new InferenceSession(modelPath, NewOptions());
 		_inputName = _session.InputMetadata.Keys.First();
 		IReadOnlyDictionary<string, NodeMetadata> outputMetadata = _session.OutputMetadata;
 		_outputName = outputMetadata.Keys.FirstOrDefault((string k) => k.Equals("image_embeds", StringComparison.OrdinalIgnoreCase)) ?? outputMetadata.Keys.FirstOrDefault((string k) => k.Equals("pooler_output", StringComparison.OrdinalIgnoreCase)) ?? outputMetadata.Keys.First();

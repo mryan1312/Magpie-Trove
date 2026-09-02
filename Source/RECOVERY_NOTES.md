@@ -115,6 +115,13 @@ The repository folder is still `E:\Dev\Taggr`. Only the product was renamed.
 - `SQLitePCLRaw.bundle_e_sqlite3` is pinned to 2.1.13, above the 2.1.11 that
   `Microsoft.Data.Sqlite` 10.0.10 pulls in, because 2.1.11 carries
   GHSA-2m69-gcr7-jv3q. Patch-level bump, same provider API.
+- ONNX Runtime is the `Microsoft.ML.OnnxRuntime.DirectML` build rather than the
+  plain package the original referenced. `ClipEmbedder` always asked for the
+  DirectML execution provider, but against the CPU-only runtime that call threw
+  and was swallowed, so inference silently ran on the CPU. With the right
+  package it engages — about 9x faster on a GTX 1080. The fallback was widened
+  at the same time so that a failure when the session is built, not just when
+  the provider is registered, still degrades to CPU.
 
 ## Not recovered
 

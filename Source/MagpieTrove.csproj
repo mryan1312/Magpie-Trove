@@ -21,12 +21,32 @@
   </ItemGroup>
 
   <!--
+    Microsoft.AI.DirectML arrives transitively with the DirectML build of ONNX
+    Runtime and brings a 2.1 MB debug layer alongside the runtime. It is only
+    loaded when a caller asks for DML_CREATE_DEVICE_FLAG_DEBUG, which nothing
+    here does, so it is dead weight in every download.
+  -->
+  <Target Name="RemoveDirectMLDebugLayer" AfterTargets="ComputeResolvedFilesToPublishList">
+    <ItemGroup>
+      <ResolvedFileToPublish
+        Remove="@(ResolvedFileToPublish)"
+        Condition="'%(Filename)%(Extension)' == 'DirectML.Debug.dll'" />
+    </ItemGroup>
+  </Target>
+
+  <!--
     Versions were read out of the assembly metadata of the DLLs in Bin.
     Transitive dependencies (the SQLitePCLRaw.* provider) come in via Microsoft.Data.Sqlite.
   -->
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.10" />
-    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.24.4" />
+    <!-- The DirectML build, not the plain Microsoft.ML.OnnxRuntime the original
+         shipped. ClipEmbedder already asks for the DirectML execution provider;
+         against the CPU-only runtime that call throws EntryPointNotFoundException
+         and is swallowed, so inference silently ran on the CPU. This package
+         carries the provider, so it actually engages. It still falls back to CPU
+         on machines where DirectML is unavailable. -->
+    <PackageReference Include="Microsoft.ML.OnnxRuntime.DirectML" Version="1.24.4" />
     <PackageReference Include="System.Numerics.Tensors" Version="10.0.10" />
     <!-- Pinned above the 2.1.11 that Microsoft.Data.Sqlite 10.0.10 pulls in:
          that version carries GHSA-2m69-gcr7-jv3q (high). Patch-level bump,

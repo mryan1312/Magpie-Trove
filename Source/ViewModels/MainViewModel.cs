@@ -767,6 +767,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
 	public RelayCommand RemoveFromLibraryCommand { get; }
 
+	public RelayCommand DeleteRejectedCommand { get; }
+
 	public RelayCommand ClearThumbnailCacheCommand { get; }
 
 	public RelayCommand ToggleSortDirectionCommand { get; }
@@ -1149,6 +1151,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 		RevealInExplorerCommand = new RelayCommand(RevealInExplorer);
 		CopyPathCommand = new RelayCommand(CopyPath);
 		RemoveFromLibraryCommand = new RelayCommand(RemoveSelectionFromLibrary);
+		DeleteRejectedCommand = new RelayCommand(DeleteRejected, () => !IsBusy);
 		ClearThumbnailCacheCommand = new RelayCommand(ClearThumbnailCache);
 		ToggleSortDirectionCommand = new RelayCommand((Action)delegate
 		{
@@ -2182,6 +2185,73 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 			ReloadFolders();
 			Refresh();
 		}
+	}
+
+	/// <summary>
+	/// Sends every rejected image's file to the Recycle Bin and drops it from the
+	/// library. Unlike the rest of the destructive operations here this one is not
+	/// undoable, because restoring the rows would leave entries pointing at files
+	/// that are no longer where they were.
+	/// </summary>
+	private void DeleteRejected()
+	{
+		List<ImageItem> rejected = ImageRepository.Query(new FilterQuery { Flags = FlagFilter.Rejected });
+		if (rejected.Count == 0)
+		{
+			StatusText = "No rejected images to delete.";
+			return;
+		}
+
+		string size = ImageItem.FormatSize(FileRecycler.TotalSize(rejected.Select((ImageItem i) => i.Path)));
+		if (MessageBox.Show(
+			$"Delete {rejected.Count:N0} rejected image(s)?\n\n" +
+			$"The files ({size}) are sent to the Recycle Bin and removed from the library along with their tags.\n\n" +
+			"This cannot be undone inside Magpie Trove — recover them from the Recycle Bin if you change your mind.",
+			"Magpie Trove", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) != MessageBoxResult.OK)
+		{
+			return;
+		}
+
+		FileRecycler.Result result = FileRecycler.Recycle(rejected.Select((ImageItem i) => (i.Id, i.Path)));
+
+		// Only forget the images whose files are actually gone. Anything that
+		// failed stays in the library so it is not silently lost track of.
+		List<long> removable = result.RecycledIds.Concat(result.AlreadyGoneIds).ToList();
+		if (removable.Count > 0)
+		{
+			ImageRepository.Remove(removable);
+			ReloadTags();
+			ReloadCollections();
+			ReloadFolders();
+			Refresh();
+		}
+
+		StatusText = BuildDeleteRejectedSummary(result);
+		if (result.Failures.Count > 0)
+		{
+			string detail = string.Join("\n", result.Failures.Take(10).Select(f => System.IO.Path.GetFileName(f.Path) + " — " + f.Reason));
+			if (result.Failures.Count > 10)
+			{
+				detail += $"\n...and {result.Failures.Count - 10:N0} more.";
+			}
+			MessageBox.Show(
+				$"{result.Failures.Count:N0} file(s) could not be deleted and were left in the library.\n\n{detail}",
+				"Magpie Trove", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+		}
+	}
+
+	private static string BuildDeleteRejectedSummary(FileRecycler.Result result)
+	{
+		string summary = $"Deleted {result.RecycledIds.Count:N0} rejected image(s) to the Recycle Bin.";
+		if (result.AlreadyGoneIds.Count > 0)
+		{
+			summary += $" {result.AlreadyGoneIds.Count:N0} were already missing and were removed from the library.";
+		}
+		if (result.Failures.Count > 0)
+		{
+			summary += $" {result.Failures.Count:N0} could not be deleted.";
+		}
+		return summary;
 	}
 
 	private void ClearFilter()

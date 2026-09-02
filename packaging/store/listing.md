@@ -22,13 +22,16 @@ Magpie Trove tags, sorts and searches your image collection entirely on your own
 ```
 Magpie Trove is a tagging and search tool for people whose image collection has outgrown folders.
 
-Point it at a folder tree and it indexes everything in place. Your files are never moved, renamed or altered — the library is a database that sits alongside them, and you can keep as many separate libraries as you like.
+Point it at a folder tree and it indexes everything in place. Your files are not moved, renamed or altered — the library is a database that sits alongside them, and you can keep as many separate libraries as you like.
 
 TAG QUICKLY
 Tags nest, so Clothes > Underwear > Jockstrap behaves the way you would expect, and a parent can be applied automatically with its children. Pin your most-used tags to the number keys and work through a folder without touching the mouse. Advance-after-tagging moves you to the next image the moment you have tagged the current one. Everything is undoable, including bulk operations.
 
 FIND ANYTHING
 Filter by tag — matching all or any — by folder, filename, star rating, or pick and reject flags. Narrow by capture date range. Narrow by camera body, lens, ISO, aperture, shutter speed or focal length, read straight from the embedded metadata. Sort by any of fifteen fields, including a random shuffle for when you are culling. Save a filter as a collection, or build a smart collection that keeps itself up to date.
+
+CULL WITHOUT CEREMONY
+Flag as you go, then delete every rejected image in one step. Magpie Trove tells you how many files and how much disk space before it does anything, and sends them to the Recycle Bin rather than deleting them outright, so a change of heart costs nothing.
 
 CLEAR OUT DUPLICATES
 Find byte-identical copies and visually near-identical ones, with an adjustable sensitivity threshold. Magpie Trove can mark the highest-resolution copy in every group as the keeper, so removing the rest is one click. Removal only ever affects the library; your files stay on disk.
@@ -58,6 +61,7 @@ REQUIREMENTS
 Nested tag hierarchy, with parent tags applied automatically
 Pin your most-used tags to the number keys and tag without the mouse
 Star ratings, plus pick and reject flags for culling
+Delete every rejected image in one step, to the Recycle Bin
 Filter by tag, folder, filename, rating, flag or capture date
 Filter by camera, lens, ISO, aperture, shutter speed and focal length
 Sort by any of fifteen fields, including random shuffle
@@ -120,8 +124,10 @@ rather than assumed. Keep them true if the app changes:
 
 - *"no telemetry, no analytics"* — the only network-capable type in the whole
   application is the single `HttpClient` in `Services/ModelInstallService.cs`.
-- *"your files are never moved, renamed or altered"* — true except where the
-  user explicitly invokes export or transfer, which the description says.
+- *"your files are not moved, renamed or altered"* — true of indexing and
+  tagging. Export and transfer write new files, and **Delete rejects** sends
+  files to the Recycle Bin after a confirmation that states the count and size.
+  Nothing deletes permanently. Do not let this sentence drift back to "never".
 
 The 351 MB model figure and the checksum verification are both real; do not
 round the number down.

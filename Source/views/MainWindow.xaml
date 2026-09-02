@@ -208,6 +208,7 @@
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ComboBox>
+              <Button Content="Delete rejects..." Margin="0,6,0,0" Height="24" Command="{Binding DeleteRejectedCommand}" ToolTip="Send every rejected image to the Recycle Bin and remove it from the library" />
               <Expander Header="Date range" Margin="0,7,0,0" Foreground="{StaticResource MutedBrush}">
                 <Grid Margin="0,5,0,0">
                   <Grid.ColumnDefinitions>

@@ -7,6 +7,8 @@ Everything runs locally — no accounts, no telemetry, no uploads.
   number keys
 - **Search and filter** by tag, folder, filename, rating, flag, date and camera
   metadata
+- **Cull** with pick/reject flags, then delete every reject in one step — to the
+  Recycle Bin, after a confirmation stating the count and size
 - **Find duplicates** by exact hash and by perceptual hash
 - **Visual search** — with an optional CLIP model installed, find lookalike
   images and get tag suggestions

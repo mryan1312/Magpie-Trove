@@ -75,6 +75,19 @@ The alternative is `.\New-Msix.ps1 -TestSign` followed by the two admin commands
 it prints. Less reliable here: Smart App Control is enforced on this machine and
 may refuse a self-signed package regardless.
 
+**Do not try to sideload the Store package itself.**
+
+```
+Add-AppxPackage .\out\MagpieTrove-1.0.0.0-x64.msix -AllowUnsigned
+  -> 0x80073D2C  the package's publisher is not in the unsigned namespace
+```
+
+That is by design. `-AllowUnsigned` only accepts a package whose Publisher
+carries the marker OID `OID.2.25.311729368913984317654407730594956997722=1`,
+and adding it would change the package identity — the family name would stop
+being `Meryndi.MagpieTrove_8xr7vqtychad0` and Partner Center would reject the
+upload. Register the layout instead, as above.
+
 
 ## Submission checklist
 

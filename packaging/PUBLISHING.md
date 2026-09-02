@@ -164,8 +164,9 @@ The capability is used for three things:
    data. It does not enumerate or read anything the user has not chosen.
 
 2. Loading the native components it depends on: ONNX Runtime, which analyses
-   images locally on the CPU, and SQLite, which stores the tag database. Both
-   are ordinary redistributable libraries shipped inside the package.
+   images locally on the user's own hardware, and SQLite, which stores the tag
+   database. Both are ordinary redistributable libraries shipped inside the
+   package. No image data leaves the device.
 
 3. A single "Reveal in Explorer" command, which launches explorer.exe /select
    on the file the user currently has selected.
@@ -191,6 +192,50 @@ changes, re-check these before reusing it:
 | Native code only via packages | No `DllImport` in the source; native code arrives with ONNX Runtime and SQLite |
 | One network endpoint | The only network-capable type is the single `HttpClient` in `Services/ModelInstallService.cs` |
 | Checksum verified | `ModelInstallService.ExpectedSha256`, checked before the file is moved into place |
+
+The wording says "the user's own hardware" rather than "the CPU" deliberately —
+see the note on DirectML below, which would otherwise make the text wrong the
+moment inference moves to the GPU.
+
+
+## Inference runs on the CPU, but not on purpose
+
+`ClipEmbedder` asks for GPU acceleration and never gets it:
+
+```csharp
+Provider = "CPU";
+if (useGpu)
+{
+    try
+    {
+        sessionOptions.AppendExecutionProvider_DML();
+        Provider = "GPU (DirectML)";
+    }
+    catch (Exception) { }
+}
+```
+
+The referenced package is `Microsoft.ML.OnnxRuntime`, the CPU-only build. Its
+native `onnxruntime.dll` has no DirectML entry point, so the call throws
+`EntryPointNotFoundException`, the empty catch swallows it, and `Provider`
+stays `"CPU"`. Verified against 1.24.4: the available providers are
+`AzureExecutionProvider, CPUExecutionProvider`, and nothing else.
+
+This is inherited, not introduced — the original build shipped the same way;
+`Bin/runtimes/win-x64/native/` contains no `DirectML.dll`.
+
+To actually get the GPU, swap the package:
+
+```xml
+<PackageReference Include="Microsoft.ML.OnnxRuntime.DirectML" Version="1.24.4" />
+```
+
+No code change is needed — the DirectML path is already written, and the
+existing try/catch still falls back to CPU on machines where it fails. The
+trade-offs are a larger package and a dependency on the user's GPU driver;
+"Analyse images" over a large library is where the difference would show. If
+you make that change, re-check the runFullTrust wording above and the "CPU"
+claim anywhere else it appears.
 
 Overstating any of this is the one way a straightforward approval turns into a
 rejection, so keep it accurate rather than flattering.

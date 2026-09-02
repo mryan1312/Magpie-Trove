@@ -107,9 +107,9 @@ upload. Register the layout instead, as above.
       submission and re-checks later, and a dead link can get a published app
       pulled. See "Hosting the privacy policy" below.
 - [ ] **Age rating** — complete the IARC questionnaire.
-- [ ] **Screenshots** — at least one, minimum 1366x768.
-      `store\screenshot-1-placeholder.png` is a 1400x820 capture of an *empty*
-      library; replace it with images that actually show the app in use.
+- [ ] **Screenshots** — `store\screenshot-1-library.png` and
+      `store\screenshot-2-viewer.png`, both 1400x820, taken from the demo
+      library described below. Add more if you want; the minimum is 1366x768.
 - [ ] **Description** — mention that the visual-search model is an optional
       351 MB download, so reviewers are not surprised by the first-run prompt.
 - [ ] **Category** — Photo & video, or Productivity.
@@ -142,6 +142,25 @@ network-capable type in the whole app is the single `HttpClient` in
 `Services/ModelInstallService.cs`, and there is no telemetry, analytics, crash
 reporting or third-party SDK anywhere. If that ever changes, the policy has to
 change with it.
+
+
+## The demo library
+
+Screenshots come from a throwaway library at `Libraries\Demo`, which is
+gitignored along with the rest of `Libraries/`. It holds 19 wildlife photographs
+taken from Wikimedia Commons, filtered to **public domain, CC0 or "no
+restrictions" only** — anything under CC BY or CC BY-SA was skipped, so no
+attribution is owed and the images are safe to publish in a Store listing.
+
+It carries a 25-tag hierarchy (Animal > Bird > Eagle and so on), pinned tags on
+keys 1-6, star ratings and a mix of pick and reject flags, so screenshots show
+the app doing something rather than sitting empty. One image is deliberately
+left untagged, which makes the "Untagged only" filter demonstrable.
+
+To rebuild or extend it, the fixture scripts are in the session scratchpad
+rather than the repo, since they are not part of the product. The library
+itself is disposable: delete `Libraries\Demo` and the entry in
+`%LOCALAPPDATA%\MagpieTrove\settings.json` to be rid of it.
 
 
 ## Things worth knowing

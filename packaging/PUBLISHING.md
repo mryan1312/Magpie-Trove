@@ -11,8 +11,11 @@ runs on machines where the plain unsigned zip is blocked outright.
     New-Zip.ps1                 publish -> ../dist/*.zip     (sideload channel)
     README.zip.txt              the README that ships inside the zip
     Images/                     generated tile and logo assets (committed)
-    store/                      listing material (screenshots)
+    store/                      Store listing material (screenshots)
     layout/, out/               build output, safe to delete
+
+The privacy policy is not here — it lives at `privacy.html` in the repository
+root, because that is where GitHub Pages serves it from.
 
 Note the project still lives under `E:\Dev\Taggr`. Only the product was renamed;
 the folder was left alone deliberately, so nothing outside the repo breaks.
@@ -99,10 +102,10 @@ upload. Register the layout instead, as above.
       adds to their library."*
 - [ ] **Privacy policy URL** — **mandatory**, because the app makes a network
       call: `Libraries... > Download model` fetches the CLIP model from Hugging
-      Face. Written already: `store\privacy.html`. It must be **hosted at a live
-      public HTTPS URL** — Partner Center validates it at submission and
-      re-checks later, and a dead link can get a published app pulled. GitHub
-      Pages is the least-effort option; see "Hosting the privacy policy" below.
+      Face. Written already: `privacy.html` in the repository root. It must be
+      **hosted at a live public HTTPS URL** — Partner Center validates it at
+      submission and re-checks later, and a dead link can get a published app
+      pulled. See "Hosting the privacy policy" below.
 - [ ] **Age rating** — complete the IARC questionnaire.
 - [ ] **Screenshots** — at least one, minimum 1366x768.
       `store\screenshot-1-placeholder.png` is a 1400x820 capture of an *empty*
@@ -116,22 +119,23 @@ Expect a few days for a first submission to clear certification.
 
 ## Hosting the privacy policy
 
-`store\privacy.html` is a single self-contained file — no assets, no build step.
-Any static host works. GitHub Pages is the usual choice because it is free,
-HTTPS by default, and stays up:
+The policy lives at `privacy.html` in the repository root — a single
+self-contained file, no assets and no build step. It is served from there by
+GitHub Pages:
 
-1. Create a public repo (or use an existing one).
-2. Put the file in it as `docs/privacy.html`, or as `privacy.html` on a
-   `gh-pages` branch.
-3. Settings > Pages > set the source to that branch/folder.
-4. The URL becomes `https://<user>.github.io/<repo>/privacy.html` — paste that
-   into Partner Center.
+1. Settings > Pages > Source: **Deploy from a branch**, branch `main`, folder
+   `/ (root)`.
+2. The URL becomes
+   `https://mryan1312.github.io/Magpie-Trove/privacy.html`.
+3. Load it in a browser and confirm it renders before pasting it into Partner
+   Center — they validate the link at submission.
 
-Cloudflare Pages, Netlify and Vercel all work the same way and are equally free.
-If you have your own domain, better still: a URL you control outlives any host.
+Keep it reachable afterwards. If the URL later 404s, the listing can be pulled.
 
-Keep it reachable once it is up. If the URL later 404s, the listing can be
-pulled.
+Edit the file in the root; do not keep a second copy anywhere, or the two will
+drift and the hosted one will quietly go stale. Any static host works equally
+well if you move off Pages — Cloudflare Pages, Netlify, Vercel — and a URL on
+your own domain outlives all of them.
 
 The policy's claims were verified against the code, not assumed: the only
 network-capable type in the whole app is the single `HttpClient` in
